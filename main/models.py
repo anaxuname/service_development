@@ -18,6 +18,7 @@ class NewsLetter(models.Model):
     def __str__(self):
         return self.name
 
+
 class Message(models.Model):
     title = models.CharField(max_length=50, verbose_name='Title')
     body = models.TextField(verbose_name='Content')
@@ -25,6 +26,7 @@ class Message(models.Model):
 
     def __str__(self):
         return self.title
+
     class Meta:
         verbose_name = 'Message'
         verbose_name_plural = 'Messages'
@@ -37,6 +39,8 @@ class Client(models.Model):
 
     def __str__(self):
         return self.full_name
+
+
 class LogNewsLetter(models.Model):
     data_newsletter = models.DateTimeField(auto_now_add=True, verbose_name='Data Time Last Try')
     status_mailing = models.IntegerField(choices=StatusChoice.choices, default=StatusChoice.CREATED,

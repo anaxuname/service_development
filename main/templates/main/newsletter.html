@@ -1,0 +1,11 @@
+{% extends 'main/base.html' %}
+{% block content %}
+
+    <h4 class="my-0 font-weight-normal">{{object.title}}</h4>
+    {% for object in object_list %}
+        <p>{{ object.title }}</p>
+        <p>{{ object.body }}</p>
+    {% endfor %}
+    <a href="{% url 'main:client_create' object.pk %}" type="button" class="btn btn-lg btn-block btn-light">Подписаться на рассылку</a>
+
+{% endblock %}
