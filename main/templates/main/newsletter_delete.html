@@ -1,0 +1,15 @@
+{% extends 'main/base.html' %}
+{% block content %}
+
+<div class="container text-center">
+
+    <form method="post">
+        {% csrf_token %}
+        <p>Вы действительно хотите удалить рассылку?</p>
+        <button type="submit" class="btn btn-outline-danger">Удалить</button>
+        <a href="{% url 'main:index' %}" type="button" class="btn btn-lg btn-block btn-light">Вернуться</a>
+
+    </form>
+
+</div>
+{% endblock %}
