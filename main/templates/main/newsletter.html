@@ -2,10 +2,12 @@
 {% block content %}
 
     <h4 class="my-0 font-weight-normal">{{object.title}}</h4>
-    {% for object in object_list %}
-        <p>{{ object.title }}</p>
-        <p>{{ object.body }}</p>
+    {% for message in messages %}
+        <p>{{ message.title }}</p>
+        <p>{{ message.body }}</p>
+        <hr />
     {% endfor %}
     <a href="{% url 'main:client_create' object.pk %}" type="button" class="btn btn-lg btn-block btn-light">Подписаться на рассылку</a>
+    <a href="{% url 'main:newsletter_update' object.pk %}" type="button" class="btn btn-lg btn-block btn-light">Изменить рассылку</a>
 
 {% endblock %}

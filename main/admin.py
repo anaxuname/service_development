@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from main.models import Client, NewsLetter
+from main.models import Client, NewsLetter, Message
 
 
 @admin.register(NewsLetter)
@@ -9,6 +9,11 @@ class NewsLetterAdmin(admin.ModelAdmin):
     list_filter = ('name', 'status_mailing')
     search_fields = ('name', 'user')
 
+
+@admin.register(Message)
+class MessageAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title')
+    search_fields = ('title', )
 
 @admin.register(Client)
 class ClientAdmin(admin.ModelAdmin):
