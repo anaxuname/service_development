@@ -8,6 +8,8 @@
         <hr />
     {% endfor %}
     <a href="{% url 'main:client_create' object.pk %}" type="button" class="btn btn-lg btn-block btn-light">Подписаться на рассылку</a>
+    {% if user.is_authenticated %}
     <a href="{% url 'main:newsletter_update' object.pk %}" type="button" class="btn btn-lg btn-block btn-light">Изменить рассылку</a>
+    {% endif %}
 
 {% endblock %}
