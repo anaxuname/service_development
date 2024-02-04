@@ -1,0 +1,22 @@
+{% extends 'main/base.html' %}
+{% block content %}
+
+{% for object in object_list %}
+<div class="col-3">
+    <div class="card mb-4 box-shadow">
+        <div class="card-header">
+            <h4 class="my-0 font-weight-normal">{{object.name}}</h4>
+        </div>
+        <div class="card-body">
+
+                <a href="{% url 'main:message_create' object.pk %}" type="button" class="btn btn-lg btn-block btn-light">Добавить сообщение</a>
+                <a href="{% url 'main:newsletter_update' object.pk %}" type="button" class="btn btn-lg btn-block btn-light">Изменить рассылку</a>
+                <a href="{% url 'main:newsletter_delete' object.pk %}" type="button" class="btn btn-lg btn-block btn-light">Удалить рассылку</a>
+                <a href="{% url 'main:newsletter_detail' object.pk %}" type="button" class="btn btn-lg btn-block btn-light">Подробнее о рассылке</a>
+                <a href="{% url 'main:client_create' object.pk %}" type="button" class="btn btn-lg btn-block btn-light">Подписаться на рассылку</a>
+
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

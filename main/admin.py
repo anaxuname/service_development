@@ -13,9 +13,10 @@ class NewsLetterAdmin(admin.ModelAdmin):
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):
     list_display = ('id', 'title')
-    search_fields = ('title', )
+    search_fields = ('title',)
+
 
 @admin.register(Client)
 class ClientAdmin(admin.ModelAdmin):
-    list_display = ('email', 'full_name')
+    list_display = ('email', 'full_name', 'newsletter')
     search_fields = ('full_name', 'newsletter')
