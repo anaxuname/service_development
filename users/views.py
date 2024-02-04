@@ -2,9 +2,7 @@ import random
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.tokens import default_token_generator
-
 from django.contrib.auth.views import LoginView as BaseLoginView
 from django.contrib.auth.views import LogoutView as BaseLogoutView
 from django.core.mail import send_mail
@@ -45,26 +43,17 @@ class RegisterView(CreateView):
         uid = urlsafe_base64_encode(force_str(new_user.pk).encode())
         verification_url = reverse('users:verify_email', kwargs={'uidb64': uid, 'token': token})
         verification_url = self.request.build_absolute_uri(verification_url)
-        send_mail(
-            subject='Подтверждение электронной почты',
+        send_mail(subject='Подтверждение электронной почты',
             message=render_to_string('users/verify_email.txt', {'verification_url': verification_url}),
-            from_email=settings.EMAIL_HOST_USER,
-            recipient_list=[new_user.email],
-            fail_silently=False,
-        )
+            from_email=settings.EMAIL_HOST_USER, recipient_list=[new_user.email], fail_silently=False, )
         return super().form_valid(form)
 
 
 @login_required
 def generate_new_password(request):
     new_password = ''.join([str(random.randint(0, 9)) for _ in range(12)])
-    send_mail(
-        subject='Смена пароля',
-        message=f'Ваш новый пароль:{new_password}',
-        from_email=settings.EMAIL_HOST_USER,
-        recipient_list=[request.user.email],
-        fail_silently=False,
-    )
+    send_mail(subject='Смена пароля', message=f'Ваш новый пароль:{new_password}', from_email=settings.EMAIL_HOST_USER,
+        recipient_list=[request.user.email], fail_silently=False, )
     request.user.set_password(new_password)
     request.user.save()
     return redirect(reverse('main:index'))
@@ -85,6 +74,7 @@ class VerifyEmailView(View):
         else:
             # Обработка ошибки подтверждения
             return redirect('users:verification_failed')
+
 
 class UserUpdateView(UpdateView):
     model = User

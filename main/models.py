@@ -15,7 +15,7 @@ class NewsLetter(models.Model):
     periodicity_mailing = models.CharField(max_length=50, verbose_name='Periodicity')
     status_mailing = models.IntegerField(choices=StatusChoice.choices, default=StatusChoice.CREATED,
                                          verbose_name='Status')
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Auth User')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='Auth User')
 
     def __str__(self):
         return f'{self.name}{self.time_mailing}'
