@@ -3,28 +3,35 @@ from django.db import models
 
 
 class StatusChoice(models.IntegerChoices):
-    CREATED = 1, "CREATED"
-    PROCESSING = 2, "PROCESSING"
-    COMPLETED = 3, "COMPLETED"
-    ERROR = 4, "ERROR"
+    CREATED = 1, "Создана"
+    PROCESSING = 2, "В обработке"
+    COMPLETED = 3, "Завершена"
+    ERROR = 4, "Ошибка"
+
+
+class PeriodicityChoice(models.IntegerChoices):
+    EVERY_DAY = 1, "Каждый день"
+    EVERY_WEEK = 2, "Каждую неделю"
+    EVERY_MONTH = 3, "Каждый месяц"
 
 
 class NewsLetter(models.Model):
-    name = models.CharField(max_length=50, verbose_name='Name NewsLetter')
-    time_mailing = models.TimeField(verbose_name='Time NewsLetter')
-    periodicity_mailing = models.CharField(max_length=50, verbose_name='Periodicity')
-    status_mailing = models.IntegerField(choices=StatusChoice.choices, default=StatusChoice.CREATED,
-                                         verbose_name='Status')
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='Auth User')
+    name = models.CharField(max_length=50, verbose_name='Имя рассылки')
+    time_mailing = models.TimeField(verbose_name='Время отправки')
+    periodicity_mailing = models.IntegerField(choices=PeriodicityChoice.choices, default=PeriodicityChoice.EVERY_DAY, verbose_name='Периодичность')
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='Автор')
 
     def __str__(self):
-        return f'{self.name}{self.time_mailing}'
+        return f'{self.name} {self.time_mailing}'
 
 
 class Message(models.Model):
     title = models.CharField(max_length=50, verbose_name='Title')
     body = models.TextField(verbose_name='Content')
     newsletter = models.ForeignKey(NewsLetter, on_delete=models.CASCADE)
+    status_mailing = models.IntegerField(choices=StatusChoice.choices, default=StatusChoice.CREATED,
+                                         verbose_name='Статус')
 
     def __str__(self):
         return self.title

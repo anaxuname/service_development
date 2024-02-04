@@ -5,14 +5,14 @@ from main.models import Client, NewsLetter, Message
 
 @admin.register(NewsLetter)
 class NewsLetterAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'time_mailing', 'status_mailing', 'user')
-    list_filter = ('name', 'status_mailing')
+    list_display = ('id', 'name', 'time_mailing', 'periodicity_mailing', 'user')
+    list_filter = ('name', )
     search_fields = ('name', 'user')
 
 
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title')
+    list_display = ('id', 'title', 'status_mailing', 'newsletter')
     search_fields = ('title',)
 
 
