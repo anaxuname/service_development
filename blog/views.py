@@ -1,3 +1,5 @@
+from django.contrib.auth.mixins import AccessMixin
+from django.http import Http404
 from django.urls import reverse_lazy, reverse
 from django.utils.text import slugify
 from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView
@@ -5,7 +7,18 @@ from django.views.generic import CreateView, ListView, DetailView, UpdateView, D
 from blog.models import Blog
 
 
-class BlogCreateView(CreateView):
+class ContentManagerRequiredMixin(AccessMixin):
+    """Verify that the current user is content manager."""
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return self.handle_no_permission()
+        if not request.user.is_content_manager():
+            raise Http404
+        return super().dispatch(request, *args, **kwargs)
+
+
+class BlogCreateView(ContentManagerRequiredMixin, CreateView):
     model = Blog
     fields = ('title', 'body', 'is_public')
     success_url = reverse_lazy('blog:list')
@@ -19,7 +32,7 @@ class BlogCreateView(CreateView):
         return super().form_valid(form)
 
 
-class BlogUpdateView(UpdateView):
+class BlogUpdateView(ContentManagerRequiredMixin, UpdateView):
     model = Blog
     fields = ('title', 'body', 'is_public')
     success_url = reverse_lazy('blog:list')
@@ -38,6 +51,7 @@ class BlogUpdateView(UpdateView):
 
 class BlogListView(ListView):
     model = Blog
+    template_name = 'blog/blog_list.html'
 
     def get_queryset(self, *args, **kwargs):
         queryset = super().get_queryset(*args, **kwargs)
@@ -55,6 +69,6 @@ class BlogDetailView(DetailView):
         return self.object
 
 
-class BlogDeleteView(DeleteView):
+class BlogDeleteView(ContentManagerRequiredMixin, DeleteView):
     model = Blog
     success_url = reverse_lazy('blog:list')
