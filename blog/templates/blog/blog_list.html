@@ -1,5 +1,5 @@
 {% extends 'main/base.html' %}
-
+{% load my_tags %}
 {% block content %}
     <div class="col-12 mb-5">
         <a class="btn btn-outline-primary" href="{% url 'blog:create' %}">Добавить блог</a>
@@ -7,6 +7,7 @@
     {% for object in object_list %}
         <div class="col-3">
             <div class="card mb-4 box-shadow">
+                <img src="{{ object.image_preview|my_media }}" class="card-img-top">
                 <div class="card-body">
                     <p class="card-text">
                         {{object|title}}
