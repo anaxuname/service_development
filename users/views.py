@@ -20,7 +20,7 @@ from users.models import User
 
 # Create your views here.
 class LoginView(BaseLoginView):
-    template_name = 'users/login.html'
+    template_name = "users/login.html"
 
 
 class LogoutView(BaseLogoutView):
@@ -30,8 +30,8 @@ class LogoutView(BaseLogoutView):
 class RegisterView(CreateView):
     model = User
     form_class = UserRegisterForm
-    success_url = reverse_lazy('users:login')
-    template_name = 'users/register.html'
+    success_url = reverse_lazy("users:login")
+    template_name = "users/register.html"
 
     def form_valid(self, form):
         new_user = form.save(commit=False)
@@ -41,22 +41,35 @@ class RegisterView(CreateView):
         new_user.email_verification_token = token
         new_user.save()
         uid = urlsafe_base64_encode(force_str(new_user.pk).encode())
-        verification_url = reverse('users:verify_email', kwargs={'uidb64': uid, 'token': token})
+        verification_url = reverse(
+            "users:verify_email", kwargs={"uidb64": uid, "token": token}
+        )
         verification_url = self.request.build_absolute_uri(verification_url)
-        send_mail(subject='Подтверждение электронной почты',
-            message=render_to_string('users/verify_email.txt', {'verification_url': verification_url}),
-            from_email=settings.EMAIL_HOST_USER, recipient_list=[new_user.email], fail_silently=False, )
+        send_mail(
+            subject="Подтверждение электронной почты",
+            message=render_to_string(
+                "users/verify_email.txt", {"verification_url": verification_url}
+            ),
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[new_user.email],
+            fail_silently=False,
+        )
         return super().form_valid(form)
 
 
 @login_required
 def generate_new_password(request):
-    new_password = ''.join([str(random.randint(0, 9)) for _ in range(12)])
-    send_mail(subject='Смена пароля', message=f'Ваш новый пароль:{new_password}', from_email=settings.EMAIL_HOST_USER,
-        recipient_list=[request.user.email], fail_silently=False, )
+    new_password = "".join([str(random.randint(0, 9)) for _ in range(12)])
+    send_mail(
+        subject="Смена пароля",
+        message=f"Ваш новый пароль:{new_password}",
+        from_email=settings.EMAIL_HOST_USER,
+        recipient_list=[request.user.email],
+        fail_silently=False,
+    )
     request.user.set_password(new_password)
     request.user.save()
-    return redirect(reverse('main:index'))
+    return redirect(reverse("main:index"))
 
 
 class VerifyEmailView(View):
@@ -70,15 +83,15 @@ class VerifyEmailView(View):
             user.email_verified = True
             user.is_active = True
             user.save()
-            return redirect('users:login')
+            return redirect("users:login")
         else:
             # Обработка ошибки подтверждения
-            return redirect('users:verification_failed')
+            return redirect("users:verification_failed")
 
 
 class UserUpdateView(UpdateView):
     model = User
-    success_url = reverse_lazy('users:profile')
+    success_url = reverse_lazy("users:profile")
     form_class = UserForm
 
     def get_object(self, queryset=None):

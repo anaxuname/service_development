@@ -1,21 +1,63 @@
-{% extends 'main/base.html' %}
-{% block content %}
+{% extends 'main/base.html' %} {% block content %}
 
-{% for object in object_list %}
-<div class="col-3">
-    <div class="card mb-4 box-shadow">
-        <div class="card-header">
-            <h4 class="my-0 font-weight-normal">{{object.name}}</h4>
-        </div>
+<div class="col-12">
+  <div class="row text-center">
+    <div class="col-6">
+      <div class="card">
         <div class="card-body">
-
-            <a href="{% url 'main:client_create' object.pk %}" type="button" class="btn btn-lg btn-block btn-light">Подписаться
-                на рассылку</a>
-            <a href="{% url 'main:newsletter_detail' object.pk %}" type="button" class="btn btn-lg btn-block btn-light">Подробнее
-                о рассылке</a>
-
+          <table class="table">
+            <tbody>
+              <tr>
+                <td>Количество рассылок всего</td>
+                <td>{{ count_mailing }}</td>
+              </tr>
+              <tr>
+                <td>Количество активных рассылок</td>
+                <td>{{ active_mailing }}</td>
+              </tr>
+              <tr>
+                <td>Уникальные клиенты</td>
+                <td>{{ count_unique_client }}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <ul>
+            {% for article in articles %}
+            <li>
+              <strong>{{ article.title }}</strong> -
+              {{article.body|truncatechars:100}}
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
-{% endfor %}
-{% endblock %}
+{% for object in object_list %}
+<div class="col-6">
+  <div class="card mb-4 box-shadow">
+    <div class="card-header">
+      <h4 class="my-0 font-weight-normal">{{object.name}}</h4>
+    </div>
+    <div class="card-body">
+      <a
+        href="{% url 'main:client_create' object.pk %}"
+        type="button"
+        class="btn btn-lg btn-block btn-light"
+        >Подписаться на рассылку</a
+      >
+      <a
+        href="{% url 'main:newsletter_detail' object.pk %}"
+        type="button"
+        class="btn btn-lg btn-block btn-light"
+        >Подробнее о рассылке</a
+      >
+    </div>
+  </div>
+</div>
+{% endfor %} {% endblock %}
