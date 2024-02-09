@@ -2,7 +2,13 @@ from django.contrib.auth.mixins import AccessMixin
 from django.http import Http404
 from django.urls import reverse_lazy, reverse
 from django.utils.text import slugify
-from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView
+from django.views.generic import (
+    CreateView,
+    ListView,
+    DetailView,
+    UpdateView,
+    DeleteView,
+)
 
 from blog.models import Blog
 
@@ -20,8 +26,9 @@ class ContentManagerRequiredMixin(AccessMixin):
 
 class BlogCreateView(ContentManagerRequiredMixin, CreateView):
     model = Blog
-    fields = ('title', 'body', 'is_public')
-    success_url = reverse_lazy('blog:list')
+    permission_required = "main.add_blog"
+    fields = ("title", "body", "is_public")
+    success_url = reverse_lazy("blog:list")
 
     def form_valid(self, form):
         if form.is_valid():
@@ -34,8 +41,8 @@ class BlogCreateView(ContentManagerRequiredMixin, CreateView):
 
 class BlogUpdateView(ContentManagerRequiredMixin, UpdateView):
     model = Blog
-    fields = ('title', 'body', 'is_public')
-    success_url = reverse_lazy('blog:list')
+    fields = ("title", "body", "is_public")
+    success_url = reverse_lazy("blog:list")
 
     def form_valid(self, form):
         if form.is_valid():
@@ -46,12 +53,12 @@ class BlogUpdateView(ContentManagerRequiredMixin, UpdateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse('blog:view', args=[self.kwargs.get('pk')])
+        return reverse("blog:view", args=[self.kwargs.get("pk")])
 
 
 class BlogListView(ListView):
     model = Blog
-    template_name = 'blog/blog_list.html'
+    template_name = "blog/blog_list.html"
 
     def get_queryset(self, *args, **kwargs):
         queryset = super().get_queryset(*args, **kwargs)
@@ -71,4 +78,4 @@ class BlogDetailView(DetailView):
 
 class BlogDeleteView(ContentManagerRequiredMixin, DeleteView):
     model = Blog
-    success_url = reverse_lazy('blog:list')
+    success_url = reverse_lazy("blog:list")

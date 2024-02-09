@@ -9,8 +9,8 @@ packages = [{include = "service_development"}]
 [tool.poetry.dependencies]
 python = "^3.11"
 Django = "4.2.7"
-psycopg2-binary = ""
-redis = ""
+psycopg2-binary = "2.9.9"
+redis = "5.0.1"
 
 
 

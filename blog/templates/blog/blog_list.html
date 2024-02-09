@@ -7,7 +7,7 @@
     {% for object in object_list %}
         <div class="col-3">
             <div class="card mb-4 box-shadow">
-                <img src="{{ object.image_preview|my_media }}" class="card-img-top">
+                <img src="{{ object.image_preview|my_media }}" class="card-img-top" alt="blog image">
                 <div class="card-body">
                     <p class="card-text">
                         {{object|title}}

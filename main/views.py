@@ -1,5 +1,5 @@
 import random
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.http import Http404
 from django.urls import reverse_lazy
 from django.views.generic import (
@@ -39,9 +39,11 @@ class NewsLetterListView(ListView):
         return context_data
 
 
-class NewsLetterCreateView(LoginRequiredMixin, CreateView):
+class NewsLetterCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+
     model = NewsLetter
     form_class = NewsLetterForm
+    permission_required = "main.add_newsletter"
     success_url = reverse_lazy("main:index")
     login_url = "/user"
 
@@ -52,9 +54,10 @@ class NewsLetterCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class MessageCreateView(LoginRequiredMixin, CreateView):
+class MessageCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     model = Message
     form_class = MessageForm
+    permission_required = "main.add_message"
     success_url = reverse_lazy("main:index")
     login_url = "/user"
 
@@ -91,9 +94,10 @@ class MyNewsLetterListView(LoginRequiredMixin, ListView):
         return context_data
 
 
-class NewsLetterUpdateView(LoginRequiredMixin, UpdateView):
+class NewsLetterUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = NewsLetter
     form_class = NewsLetterForm
+    permission_required = "main.change_newsletter"
     success_url = reverse_lazy("main:index")
     login_url = "/user"
 

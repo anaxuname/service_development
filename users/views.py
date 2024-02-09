@@ -1,20 +1,21 @@
 import random
 
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.views import LoginView as BaseLoginView
 from django.contrib.auth.views import LogoutView as BaseLogoutView
 from django.core.mail import send_mail
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse, reverse_lazy
 from django.utils.encoding import force_str
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views import View
-from django.views.generic import CreateView, UpdateView, TemplateView
+from django.views.generic import CreateView, ListView, TemplateView, UpdateView
 
-from users.forms import UserRegisterForm, UserForm
+from users.forms import UserForm, UserRegisterForm
 from users.models import User
 
 
@@ -41,15 +42,11 @@ class RegisterView(CreateView):
         new_user.email_verification_token = token
         new_user.save()
         uid = urlsafe_base64_encode(force_str(new_user.pk).encode())
-        verification_url = reverse(
-            "users:verify_email", kwargs={"uidb64": uid, "token": token}
-        )
+        verification_url = reverse("users:verify_email", kwargs={"uidb64": uid, "token": token})
         verification_url = self.request.build_absolute_uri(verification_url)
         send_mail(
             subject="Подтверждение электронной почты",
-            message=render_to_string(
-                "users/verify_email.txt", {"verification_url": verification_url}
-            ),
+            message=render_to_string("users/verify_email.txt", {"verification_url": verification_url}),
             from_email=settings.EMAIL_HOST_USER,
             recipient_list=[new_user.email],
             fail_silently=False,
@@ -70,6 +67,18 @@ def generate_new_password(request):
     request.user.set_password(new_password)
     request.user.save()
     return redirect(reverse("main:index"))
+
+
+@permission_required("users.set_user_deactivate")
+def toggle_active(request, pk):
+    """Пермиссия: функция для активации/деактивации пользователя"""
+    user = User.objects.get(pk=pk)
+    if user.is_active:
+        user.is_active = False
+    else:
+        user.is_active = True
+    user.save()
+    return redirect(reverse("users:users"))
 
 
 class VerifyEmailView(View):
@@ -100,3 +109,13 @@ class UserUpdateView(UpdateView):
 
 class VerificationFailedView(TemplateView):
     template_name = "users/verification_failed.html"
+
+
+class UserListView(PermissionRequiredMixin, ListView):
+    """Класс для просмотра списка пользователей"""
+
+    permission_required = "users.view_all_users"
+    model = User
+
+    def get_queryset(self):
+        return super().get_queryset().exclude(pk=self.request.user.pk).exclude(is_superuser=True)
